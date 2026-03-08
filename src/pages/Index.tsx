@@ -43,6 +43,7 @@ const tests = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { completedCount } = useResults();
 
   return (
     <div className="min-h-screen bg-background px-4 py-12 md:py-20">
