@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResults } from "@/context/ResultsContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, Circle, RotateCcw, Trophy } from "lucide-react";
+import ShareResults from "@/components/ShareResults";
 
 // Percentile lookup tables based on published norms
 const getReactionTimePercentile = (avgMs: number): number => {
