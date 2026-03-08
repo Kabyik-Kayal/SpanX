@@ -235,7 +235,7 @@ const DashboardPage = () => {
         )}
 
         {/* Actions */}
-        <div className="mt-8 flex justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           {completedCount < 4 && (
             <Button onClick={() => {
               const incomplete = percentiles.find(p => p.percentile === null);
@@ -243,6 +243,9 @@ const DashboardPage = () => {
             }}>
               Continue Testing
             </Button>
+          )}
+          {completedCount > 0 && (
+            <ShareResults screenshotRef={screenshotRef} overallScore={overallScore} />
           )}
           {completedCount > 0 && (
             <Button variant="outline" onClick={() => { reset(); navigate("/"); }} className="gap-2">
