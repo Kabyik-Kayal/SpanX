@@ -120,7 +120,7 @@ const DashboardPage = () => {
           Back to tests
         </button>
 
-        <div className="mb-10">
+        <div ref={screenshotRef} className="mb-10">
           <h1 className="mb-2 text-2xl font-bold md:text-3xl">Your Attention Profile</h1>
           <p className="text-sm text-muted-foreground">
             {completedCount}/4 tests completed. Percentile means the % of people you scored higher than.
