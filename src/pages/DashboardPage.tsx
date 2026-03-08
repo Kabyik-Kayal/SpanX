@@ -1,7 +1,9 @@
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useResults } from "@/context/ResultsContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, Circle, RotateCcw, Trophy } from "lucide-react";
+import ShareResults from "@/components/ShareResults";
 
 // Percentile lookup tables based on published norms
 const getReactionTimePercentile = (avgMs: number): number => {
@@ -59,6 +61,7 @@ const getOverallRating = (score: number): { label: string; color: string; descri
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { results, completedCount, reset } = useResults();
+  const screenshotRef = useRef<HTMLDivElement>(null);
 
   const percentiles: { name: string; percentile: number | null; path: string; what: string; detail: string }[] = [
     {
@@ -117,6 +120,7 @@ const DashboardPage = () => {
           Back to tests
         </button>
 
+        <div ref={screenshotRef} className="bg-background">
         <div className="mb-10">
           <h1 className="mb-2 text-2xl font-bold md:text-3xl">Your Attention Profile</h1>
           <p className="text-sm text-muted-foreground">
@@ -230,9 +234,10 @@ const DashboardPage = () => {
             </div>
           </div>
         )}
+        </div>{/* end screenshotRef */}
 
         {/* Actions */}
-        <div className="mt-8 flex justify-center gap-3">
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
           {completedCount < 4 && (
             <Button onClick={() => {
               const incomplete = percentiles.find(p => p.percentile === null);
@@ -240,6 +245,9 @@ const DashboardPage = () => {
             }}>
               Continue Testing
             </Button>
+          )}
+          {completedCount > 0 && (
+            <ShareResults screenshotRef={screenshotRef} overallScore={overallScore} />
           )}
           {completedCount > 0 && (
             <Button variant="outline" onClick={() => { reset(); navigate("/"); }} className="gap-2">
