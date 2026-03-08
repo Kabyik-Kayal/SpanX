@@ -9,6 +9,7 @@ import ReactionTimePage from "./pages/ReactionTimePage";
 import StroopPage from "./pages/StroopPage";
 import CPTPage from "./pages/CPTPage";
 import SequenceMemoryPage from "./pages/SequenceMemoryPage";
+import ContinuousTestPage from "./pages/ContinuousTestPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/test/stroop" element={<StroopPage />} />
             <Route path="/test/cpt" element={<CPTPage />} />
             <Route path="/test/sequence" element={<SequenceMemoryPage />} />
+            <Route path="/test" element={<ContinuousTestPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
