@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Zap, Brain, Eye, Grid3X3 } from "lucide-react";
+import { Zap, Brain, Eye, Grid3X3, BarChart3 } from "lucide-react";
+import { useResults } from "@/context/ResultsContext";
 
 const tests = [
   {
