@@ -9,6 +9,7 @@ import ReactionTimePage from "./pages/ReactionTimePage";
 import StroopPage from "./pages/StroopPage";
 import CPTPage from "./pages/CPTPage";
 import SequenceMemoryPage from "./pages/SequenceMemoryPage";
+import ContinuousTestPage from "./pages/ContinuousTestPage";
 import DashboardPage from "./pages/DashboardPage";
 import NotFound from "./pages/NotFound";
 
