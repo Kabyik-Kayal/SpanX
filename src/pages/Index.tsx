@@ -66,21 +66,12 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Start CTA */}
-        <button
-          onClick={() => navigate("/test")}
-          className="w-full rounded-2xl border-2 border-primary bg-primary/5 p-5 text-center transition-all hover:bg-primary/10 active:scale-[0.99]"
-        >
-          <span className="font-display text-lg font-bold text-primary">Begin All Tests →</span>
-          <p className="mt-1 text-sm text-muted-foreground font-body">~6 minutes · 4 tests · continuous flow</p>
-        </button>
-
-        {/* Test Overview */}
-        <div className="mt-6 grid gap-3">
+        {/* Test Overview (non-interactive) */}
+        <div className="grid gap-3">
           {tests.map((test, i) => (
             <div
               key={test.id}
-              className="group flex items-start gap-4 rounded-2xl border-2 border-border bg-card p-5 text-left"
+              className="flex items-start gap-4 rounded-2xl border-2 border-border bg-card p-5 text-left opacity-80"
               style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
@@ -98,11 +89,19 @@ const Index = () => {
           ))}
         </div>
 
+        {/* Take Test CTA */}
+        <button
+          onClick={() => navigate("/test")}
+          className="mt-6 w-full rounded-2xl border-2 border-primary bg-primary text-primary-foreground p-4 font-display text-sm font-bold transition-all hover:bg-primary/90 active:scale-[0.99]"
+        >
+          Take Test →
+        </button>
+
         {/* Dashboard CTA */}
         {completedCount > 0 && (
           <button
             onClick={() => navigate("/dashboard")}
-            className="mt-6 w-full flex items-center justify-center gap-3 rounded-2xl border-2 border-primary/30 bg-primary/5 p-4 font-display text-sm font-bold text-primary transition-all hover:bg-primary/10 active:scale-[0.99]"
+            className="mt-3 w-full flex items-center justify-center gap-3 rounded-2xl border-2 border-primary/30 bg-primary/5 p-4 font-display text-sm font-bold text-primary transition-all hover:bg-primary/10 active:scale-[0.99]"
           >
             <BarChart3 className="h-5 w-5" />
             View Dashboard — {completedCount}/4 tests completed
