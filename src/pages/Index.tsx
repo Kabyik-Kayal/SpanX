@@ -66,16 +66,24 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Test Cards */}
-        <div className="grid gap-3">
+        {/* Start CTA */}
+        <button
+          onClick={() => navigate("/test")}
+          className="w-full rounded-2xl border-2 border-primary bg-primary/5 p-5 text-center transition-all hover:bg-primary/10 active:scale-[0.99]"
+        >
+          <span className="font-display text-lg font-bold text-primary">Begin All Tests →</span>
+          <p className="mt-1 text-sm text-muted-foreground font-body">~6 minutes · 4 tests · continuous flow</p>
+        </button>
+
+        {/* Test Overview */}
+        <div className="mt-6 grid gap-3">
           {tests.map((test, i) => (
-            <button
+            <div
               key={test.id}
-              onClick={() => navigate(test.path)}
-              className="group flex items-start gap-4 rounded-2xl border-2 border-border bg-card p-5 text-left transition-all hover:border-primary/40 hover:bg-primary/5 active:scale-[0.99]"
+              className="group flex items-start gap-4 rounded-2xl border-2 border-border bg-card p-5 text-left"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
                 <test.icon className="h-5 w-5" />
               </div>
               <div className="flex-1 min-w-0">
@@ -86,7 +94,7 @@ const Index = () => {
                 <p className="mt-1 text-sm text-muted-foreground font-body">{test.description}</p>
                 <p className="mt-1.5 text-xs text-muted-foreground/70 font-display">{test.method}</p>
               </div>
-            </button>
+            </div>
           ))}
         </div>
 

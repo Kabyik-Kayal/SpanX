@@ -28,6 +28,7 @@ const App = () => (
             <Route path="/test/stroop" element={<StroopPage />} />
             <Route path="/test/cpt" element={<CPTPage />} />
             <Route path="/test/sequence" element={<SequenceMemoryPage />} />
+            <Route path="/test" element={<ContinuousTestPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
