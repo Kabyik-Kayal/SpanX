@@ -48,12 +48,12 @@ const getSequencePercentile = (maxLevel: number): number => {
   return 5;
 };
 
-const getOverallRating = (score: number): { label: string; color: string } => {
-  if (score >= 90) return { label: "Exceptional", color: "text-primary" };
-  if (score >= 75) return { label: "Above Average", color: "text-primary" };
-  if (score >= 50) return { label: "Average", color: "text-foreground" };
-  if (score >= 30) return { label: "Below Average", color: "text-warning" };
-  return { label: "Needs Improvement", color: "text-destructive" };
+const getOverallRating = (score: number): { label: string; color: string; description: string } => {
+  if (score >= 90) return { label: "Exceptional", color: "text-primary", description: "Your attention abilities are outstanding, placing you among the top performers." };
+  if (score >= 75) return { label: "Above Average", color: "text-primary", description: "Your attention skills are stronger than most people. You show solid focus and cognitive control." };
+  if (score >= 50) return { label: "Average", color: "text-foreground", description: "Your attention abilities are typical for the general population. Room for improvement exists." };
+  if (score >= 30) return { label: "Below Average", color: "text-warning", description: "Your scores suggest some areas of attention could benefit from practice or lifestyle changes." };
+  return { label: "Needs Improvement", color: "text-destructive", description: "Your results indicate attention difficulties. Consider factors like sleep, stress, or screen time." };
 };
 
 const DashboardPage = () => {
