@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { Zap, Brain, Eye, Grid3X3 } from "lucide-react";
+import { Zap, Brain, Eye, Grid3X3, BarChart3 } from "lucide-react";
+import { useResults } from "@/context/ResultsContext";
 
 const tests = [
   {
@@ -42,6 +43,7 @@ const tests = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { completedCount } = useResults();
 
   return (
     <div className="min-h-screen bg-background px-4 py-12 md:py-20">
@@ -87,6 +89,17 @@ const Index = () => {
             </button>
           ))}
         </div>
+
+        {/* Dashboard CTA */}
+        {completedCount > 0 && (
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="mt-6 w-full flex items-center justify-center gap-3 rounded-2xl border-2 border-primary/30 bg-primary/5 p-4 font-display text-sm font-bold text-primary transition-all hover:bg-primary/10 active:scale-[0.99]"
+          >
+            <BarChart3 className="h-5 w-5" />
+            View Dashboard — {completedCount}/4 tests completed
+          </button>
+        )}
 
         {/* Footer */}
         <div className="mt-12 text-center">
