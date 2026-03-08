@@ -61,6 +61,7 @@ const getOverallRating = (score: number): { label: string; color: string; descri
 const DashboardPage = () => {
   const navigate = useNavigate();
   const { results, completedCount, reset } = useResults();
+  const screenshotRef = useRef<HTMLDivElement>(null);
 
   const percentiles: { name: string; percentile: number | null; path: string; what: string; detail: string }[] = [
     {
