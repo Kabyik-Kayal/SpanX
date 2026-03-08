@@ -16,8 +16,8 @@ const ShareResults = ({ screenshotRef, overallScore }: ShareResultsProps) => {
 
   const shareUrl = window.location.origin + "/dashboard";
   const shareText = overallScore !== null
-    ? `I scored in the ${overallScore}th percentile on the Attentra Attention Test! Can you beat my score?`
-    : "Check out the Attentra Attention Test!";
+    ? `I scored in the ${overallScore}th percentile on the SpanX Attention Test! Can you beat my score?`
+    : "Check out the SpanX Attention Test!";
 
   const handleCopyLink = async () => {
     await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
