@@ -14,7 +14,7 @@ const ShareResults = ({ screenshotRef, overallScore }: ShareResultsProps) => {
   const [copied, setCopied] = useState(false);
   const [generating, setGenerating] = useState(false);
 
-  const shareUrl = window.location.origin + "/dashboard";
+  const shareUrl = "https://www.kabyik.dev/SpanX/";
   const shareText = overallScore !== null
     ? `I scored in the ${overallScore}th percentile on the SpanX Attention Test! Can you beat my score?`
     : "Check out the SpanX Attention Test!";
