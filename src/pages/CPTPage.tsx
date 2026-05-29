@@ -15,9 +15,9 @@ const CPTPage = () => {
       title="Continuous Performance Test"
       description="The CPT is a gold-standard measure of sustained attention and vigilance. Used clinically in ADHD assessment."
     >
-      <CPTTest onComplete={(hits, misses, falseAlarms, avgRT) => {
+      <CPTTest onComplete={(hits, misses, falseAlarms, avgRT, totalStimuli) => {
         setDone(true);
-        setCPT({ hits, misses, falseAlarms, avgRT });
+        setCPT({ hits, misses, falseAlarms, avgRT, totalStimuli });
       }} />
       {done && (
         <div className="mt-6 flex justify-center gap-3 animate-fade-in">

@@ -107,7 +107,7 @@ const SequenceMemoryTest = ({ onComplete }: { onComplete: (maxLevel: number) => 
           <span className="stat-label">Max Sequence</span>
         </div>
         <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-          Average working memory span is 5–9 items. A higher number indicates stronger attentional capacity.
+          The average visuospatial span is around 5–6 items; 7+ is above average. A higher number indicates stronger attentional capacity.
         </p>
       </div>
     );

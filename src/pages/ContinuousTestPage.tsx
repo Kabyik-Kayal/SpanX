@@ -54,8 +54,8 @@ const ContinuousTestPage = () => {
       case 2:
         return (
           <CPTTest
-            onComplete={(hits, misses, falseAlarms, avgRT) => {
-              setCPT({ hits, misses, falseAlarms, avgRT });
+            onComplete={(hits, misses, falseAlarms, avgRT, totalStimuli) => {
+              setCPT({ hits, misses, falseAlarms, avgRT, totalStimuli });
               setTestDone(true);
             }}
           />

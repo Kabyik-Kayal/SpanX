@@ -1,5 +1,6 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useLayoutEffect, type MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { onNextPaint, eventTime, MIN_VALID_RT } from "@/lib/timing";
 
 type Phase = "idle" | "waiting" | "ready" | "result" | "too-early" | "done";
 
@@ -19,19 +20,33 @@ const ReactionTimeTest = ({ onComplete }: { onComplete: (avg: number, trials: nu
     setPhase("waiting");
     const delay = 2000 + Math.random() * 4000;
     timerRef.current = setTimeout(() => {
+      // Fallback onset; refined to the actual paint time by the effect below.
       startTimeRef.current = performance.now();
       setPhase("ready");
     }, delay);
   }, []);
 
-  const handleClick = useCallback(() => {
+  // Refine the stimulus onset to the paint that makes the green visible, rather
+  // than when we flipped state. useLayoutEffect schedules the rAF before paint;
+  // if rAF is paused (e.g. backgrounded tab) the fallback above still stands.
+  useLayoutEffect(() => {
+    if (phase !== "ready") return;
+    return onNextPaint((ts) => { startTimeRef.current = ts; });
+  }, [phase]);
+
+  const handleClick = useCallback((e: MouseEvent<HTMLDivElement>) => {
     if (phase === "waiting") {
       if (timerRef.current) clearTimeout(timerRef.current);
       setPhase("too-early");
       return;
     }
     if (phase === "ready") {
-      const rt = Math.round(performance.now() - startTimeRef.current);
+      const rt = Math.round(eventTime(e) - startTimeRef.current);
+      if (rt < MIN_VALID_RT) {
+        // Faster than a real reaction => anticipation, don't count it.
+        setPhase("too-early");
+        return;
+      }
       setCurrentTime(rt);
       const newTrials = [...trials, { reactionTime: rt }];
       setTrials(newTrials);

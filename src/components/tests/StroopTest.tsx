@@ -1,5 +1,7 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, type MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { onNextPaint, eventTime, validReactionTimes } from "@/lib/timing";
+import { mean } from "@/lib/scoring";
 
 const COLORS = [
   { name: "Red", hsl: "0 72% 51%" },
@@ -13,6 +15,12 @@ interface Trial {
   reactionTime: number;
   congruent: boolean;
 }
+
+/** Mean reaction time over plausible trials, ignoring anticipations/misfires. */
+const avgValidRT = (trials: Trial[]): number => {
+  const rts = validReactionTimes(trials.map((t) => t.reactionTime));
+  return rts.length ? Math.round(mean(rts)) : 0;
+};
 
 type Phase = "idle" | "testing" | "done";
 
@@ -35,7 +43,9 @@ const StroopTest = ({ onComplete }: { onComplete: (accuracy: number, avgTime: nu
     // Shuffle options to include the correct answer
     const shuffled = [...COLORS].sort(() => Math.random() - 0.5);
     setOptions(shuffled);
+    // Fallback onset, refined to the paint of the new word when rAF fires.
     startTimeRef.current = performance.now();
+    onNextPaint((ts) => { startTimeRef.current = ts; });
     setFeedback(null);
   }, []);
 
@@ -45,8 +55,8 @@ const StroopTest = ({ onComplete }: { onComplete: (accuracy: number, avgTime: nu
     generateTrial();
   };
 
-  const handleAnswer = (selectedColor: typeof COLORS[0]) => {
-    const rt = Math.round(performance.now() - startTimeRef.current);
+  const handleAnswer = (selectedColor: typeof COLORS[0], e: MouseEvent<HTMLButtonElement>) => {
+    const rt = Math.round(eventTime(e) - startTimeRef.current);
     const correct = selectedColor.name === currentColor.name;
     const congruent = currentWord === currentColor.name;
     const newTrials = [...trials, { correct, reactionTime: rt, congruent }];
@@ -58,8 +68,7 @@ const StroopTest = ({ onComplete }: { onComplete: (accuracy: number, avgTime: nu
       if (newTrials.length >= totalTrials) {
         setPhase("done");
         const accuracy = Math.round((newTrials.filter(t => t.correct).length / newTrials.length) * 100);
-        const avgTime = Math.round(newTrials.reduce((a, t) => a + t.reactionTime, 0) / newTrials.length);
-        onComplete(accuracy, avgTime);
+        onComplete(accuracy, avgValidRT(newTrials));
       } else {
         generateTrial();
       }
@@ -79,11 +88,9 @@ const StroopTest = ({ onComplete }: { onComplete: (accuracy: number, avgTime: nu
 
   if (phase === "done") {
     const accuracy = Math.round((trials.filter(t => t.correct).length / trials.length) * 100);
-    const avgTime = Math.round(trials.reduce((a, t) => a + t.reactionTime, 0) / trials.length);
-    const congruentTrials = trials.filter(t => t.congruent);
-    const incongruentTrials = trials.filter(t => !t.congruent);
-    const avgCongruent = congruentTrials.length ? Math.round(congruentTrials.reduce((a, t) => a + t.reactionTime, 0) / congruentTrials.length) : 0;
-    const avgIncongruent = incongruentTrials.length ? Math.round(incongruentTrials.reduce((a, t) => a + t.reactionTime, 0) / incongruentTrials.length) : 0;
+    const avgTime = avgValidRT(trials);
+    const avgCongruent = avgValidRT(trials.filter(t => t.congruent));
+    const avgIncongruent = avgValidRT(trials.filter(t => !t.congruent));
 
     return (
       <div className="text-center space-y-6 animate-fade-in">
@@ -134,7 +141,7 @@ const StroopTest = ({ onComplete }: { onComplete: (accuracy: number, avgTime: nu
         {options.map((color) => (
           <button
             key={color.name}
-            onClick={() => handleAnswer(color)}
+            onClick={(e) => handleAnswer(color, e)}
             className="rounded-xl border-2 border-border bg-card p-4 font-display text-sm font-medium transition-all hover:border-primary hover:bg-primary/5 active:scale-95"
           >
             <span

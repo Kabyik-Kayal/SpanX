@@ -4,59 +4,14 @@ import { useResults } from "@/context/ResultsContext";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle2, Circle, RotateCcw, Trophy } from "lucide-react";
 import ShareResults from "@/components/ShareResults";
-
-// Percentile lookup tables based on published norms
-const getReactionTimePercentile = (avgMs: number): number => {
-  // Based on PVT norms (Basner & Dinges, 2011)
-  if (avgMs <= 160) return 99;
-  if (avgMs <= 180) return 95;
-  if (avgMs <= 200) return 90;
-  if (avgMs <= 220) return 80;
-  if (avgMs <= 250) return 65;
-  if (avgMs <= 280) return 50;
-  if (avgMs <= 320) return 35;
-  if (avgMs <= 370) return 20;
-  if (avgMs <= 450) return 10;
-  return 5;
-};
-
-const getStroopPercentile = (accuracy: number, avgTimeMs: number): number => {
-  // Combined score: accuracy weighted more heavily
-  const accScore = accuracy >= 100 ? 95 : accuracy >= 90 ? 80 : accuracy >= 80 ? 60 : accuracy >= 70 ? 40 : 20;
-  const speedScore = avgTimeMs <= 500 ? 95 : avgTimeMs <= 700 ? 80 : avgTimeMs <= 900 ? 60 : avgTimeMs <= 1200 ? 40 : 20;
-  return Math.round(accScore * 0.6 + speedScore * 0.4);
-};
-
-const getCPTPercentile = (hits: number, misses: number, falseAlarms: number, avgRT: number): number => {
-  const total = hits + misses;
-  const hitRate = total > 0 ? hits / total : 0;
-  const faRate = falseAlarms / 30; // out of total stimuli
-  const dPrime = Math.min(hitRate * 100 - faRate * 100, 100);
-  const accScore = hitRate >= 1 ? 95 : hitRate >= 0.9 ? 80 : hitRate >= 0.8 ? 60 : hitRate >= 0.6 ? 35 : 15;
-  const faScore = faRate <= 0.05 ? 95 : faRate <= 0.1 ? 75 : faRate <= 0.2 ? 50 : 25;
-  const rtScore = avgRT <= 300 ? 90 : avgRT <= 400 ? 70 : avgRT <= 500 ? 50 : 30;
-  return Math.round(accScore * 0.4 + faScore * 0.3 + rtScore * 0.3);
-};
-
-const getSequencePercentile = (maxLevel: number): number => {
-  // Corsi norms: average span is 5-6
-  if (maxLevel >= 9) return 99;
-  if (maxLevel >= 8) return 95;
-  if (maxLevel >= 7) return 85;
-  if (maxLevel >= 6) return 70;
-  if (maxLevel >= 5) return 50;
-  if (maxLevel >= 4) return 30;
-  if (maxLevel >= 3) return 15;
-  return 5;
-};
-
-const getOverallRating = (score: number): { label: string; color: string; description: string } => {
-  if (score >= 90) return { label: "Exceptional", color: "text-primary", description: "Your attention abilities are outstanding, placing you among the top performers." };
-  if (score >= 75) return { label: "Above Average", color: "text-primary", description: "Your attention skills are stronger than most people. You show solid focus and cognitive control." };
-  if (score >= 50) return { label: "Average", color: "text-foreground", description: "Your attention abilities are typical for the general population. Room for improvement exists." };
-  if (score >= 30) return { label: "Below Average", color: "text-warning", description: "Your scores suggest some areas of attention could benefit from practice or lifestyle changes." };
-  return { label: "Needs Improvement", color: "text-destructive", description: "Your results indicate attention difficulties. Consider factors like sleep, stress, or screen time." };
-};
+import {
+  median,
+  getReactionTimePercentile,
+  getStroopPercentile,
+  getCPTPercentile,
+  getSequencePercentile,
+  getOverallRating,
+} from "@/lib/scoring";
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -66,11 +21,11 @@ const DashboardPage = () => {
   const percentiles: { name: string; percentile: number | null; path: string; what: string; detail: string }[] = [
     {
       name: "Reaction Time",
-      percentile: results.reactionTime ? getReactionTimePercentile(results.reactionTime.avgMs) : null,
+      percentile: results.reactionTime ? getReactionTimePercentile(median(results.reactionTime.trials)) : null,
       path: "/test/reaction-time",
       what: "How quickly you respond to visual stimuli",
       detail: results.reactionTime
-        ? `Your average reaction time was ${results.reactionTime.avgMs}ms. Under 200ms is elite, 200–280ms is good, and above 350ms suggests slower processing.`
+        ? `Your median reaction time was ${median(results.reactionTime.trials)}ms (average ${results.reactionTime.avgMs}ms). Under 200ms is elite, 200–280ms is good, and above 350ms suggests slower processing.`
         : "",
     },
     {
@@ -84,7 +39,7 @@ const DashboardPage = () => {
     },
     {
       name: "Sustained Attention (CPT)",
-      percentile: results.cpt ? getCPTPercentile(results.cpt.hits, results.cpt.misses, results.cpt.falseAlarms, results.cpt.avgRT) : null,
+      percentile: results.cpt ? getCPTPercentile(results.cpt.hits, results.cpt.misses, results.cpt.falseAlarms, results.cpt.avgRT, results.cpt.totalStimuli) : null,
       path: "/test/cpt",
       what: "How well you maintain focus over time and avoid impulsive responses",
       detail: results.cpt

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 export interface ReactionTimeResult {
   avgMs: number;
@@ -15,6 +15,7 @@ export interface CPTResult {
   misses: number;
   falseAlarms: number;
   avgRT: number;
+  totalStimuli: number;
 }
 
 export interface SequenceResult {
@@ -45,6 +46,20 @@ const defaultResults: TestResults = {
   sequence: null,
 };
 
+const STORAGE_KEY = "spanx-results-v1";
+
+const loadResults = (): TestResults => {
+  if (typeof window === "undefined") return defaultResults;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultResults;
+    const parsed = JSON.parse(raw);
+    return { ...defaultResults, ...parsed };
+  } catch {
+    return defaultResults;
+  }
+};
+
 const ResultsContext = createContext<ResultsContextType | null>(null);
 
 export const useResults = () => {
@@ -54,7 +69,15 @@ export const useResults = () => {
 };
 
 export const ResultsProvider = ({ children }: { children: ReactNode }) => {
-  const [results, setResults] = useState<TestResults>(defaultResults);
+  const [results, setResults] = useState<TestResults>(loadResults);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+    } catch {
+      // ignore quota / private-mode write failures
+    }
+  }, [results]);
 
   const completedCount = [results.reactionTime, results.stroop, results.cpt, results.sequence].filter(Boolean).length;
 

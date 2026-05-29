@@ -35,7 +35,7 @@ const ShareResults = ({ screenshotRef, overallScore }: ShareResultsProps) => {
         pixelRatio: 2,
       });
       const link = document.createElement("a");
-      link.download = "attentra-results.png";
+      link.download = "spanx-results.png";
       link.href = dataUrl;
       link.click();
       toast("Image downloaded!");
